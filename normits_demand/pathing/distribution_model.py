@@ -763,19 +763,26 @@ class DistributionModelArgumentBuilder(DMArgumentBuilderBase):
                   ) -> pd.DataFrame:
         """Reads in the cost matrix for this segment"""
         # Generate the path to the segment file
+        # cost_dir = os.path.join(
+        #     self.import_home,
+        #     self._modal_dir_name,
+        #     self.running_mode.value,
+        #     self._cost_dir_name,
+        #     zoning_system.name,
+        # )
+        # fname = self.running_segmentation.generate_file_name(
+        #     trip_origin=self.trip_origin.value,
+        #     file_desc=f"{zoning_system.name}_cost",
+        #     segment_params=segment_params,
+        #     csv=True,
+        # )
         cost_dir = os.path.join(
             self.import_home,
-            self._modal_dir_name,
-            self.running_mode.value,
             self._cost_dir_name,
+            self.running_mode.value,
             zoning_system.name,
         )
-        fname = self.running_segmentation.generate_file_name(
-            trip_origin=self.trip_origin.value,
-            file_desc=f"{zoning_system.name}_cost",
-            segment_params=segment_params,
-            csv=True,
-        )
+        fname = self.running_mode.value + 'Costs_InternalArea_Square_m.csv.bz2'
         path = os.path.join(cost_dir, fname)
 
         # Read in the costs and infill

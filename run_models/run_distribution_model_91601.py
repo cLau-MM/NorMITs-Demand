@@ -17,7 +17,7 @@ import sys
 # Third Party
 
 # Local Imports
-sys.path.append("..")
+sys.path.append(r"I:\Products\P9. MiMITs\02 Working\MITs\NorMITs-Demand-0.5.2")
 # pylint: disable=import-error,wrong-import-position
 import normits_demand as nd
 
@@ -27,14 +27,16 @@ from normits_demand.models import DistributionModel
 from normits_demand.pathing.distribution_model import DistributionModelArgumentBuilder
 # pylint: enable=import-error,wrong-import-position
 
+# 2024 addition
+from caf.distribute import cost_functions
 
 # ## CONSTANTS ## #
 # Trip end import args
+#CARMEN CHANGE THIS
 NOTEM_ITERATION_NAME = '9.16'
 TOUR_PROPS_VERSION = f"v{NOTEM_ITERATION_NAME}"
 RUNNING_TIME_FORMAT = nd.core.TimeFormat.AVG_WEEK
 OUTPUT_TIME_FORMAT = nd.core.TimeFormat.AVG_DAY
-
 
 NOTEM_EXPORT_HOME = r"I:\Products\P9. MiMITs\02 Working\MITs\NorMITs-Demand-0.5.2\Export"
 TRAM_EXPORT_HOME = r"I:\Products\P9. MiMITs\02 Working\MITs\NorMITs-Demand-0.5.2\Export"
@@ -42,10 +44,10 @@ TRAM_EXPORT_HOME = r"I:\Products\P9. MiMITs\02 Working\MITs\NorMITs-Demand-0.5.2
 # Distribution running args
 BASE_YEAR = 2023
 SCENARIO = nd.Scenario.SC01_JAM
-TARGET_TLD_VERSION = ''
-DM_ITERATION_NAME = '9.16.03'
-#DM_IMPORT_HOME = r"N:\NorMITs Demand\import"
-DM_IMPORT_HOME = r"C:\Users\DAGA1\Documents\GitHub\NorMITs-Demand\inputs"
+TARGET_TLD_VERSION = 'v2.2'
+#CARMEN CHANGE THIS
+DM_ITERATION_NAME = '9.16.01'
+DM_IMPORT_HOME = r"N:\NorMITs Demand\import"
 DM_EXPORT_HOME = r"I:\Products\P9. MiMITs\02 Working\MITs\NorMITs-Demand-0.5.2\Export"
 
 # General constants
@@ -59,8 +61,7 @@ NHB_SUBSET_SEG_BASE_NAME = '{te_model_name}_{trip_origin}_output_reduced'
 
 
 def main():
-    mode = nd.Mode.WALK
-    # mode = nd.Mode.CAR
+    mode = nd.Mode.CAR
     # mode = nd.Mode.BUS
     # mode = nd.Mode.TRAIN
     # mode = nd.Mode.TRAM
@@ -75,13 +76,13 @@ def main():
     run_hb = True
     run_nhb = True
 
-    run_all = True
-    run_upper_model = True
-    run_lower_model = True
-    run_pa_matrix_reports = True
+    run_all = False
+    run_upper_model = False
+    run_lower_model = False
+    run_pa_matrix_reports = False
     run_pa_to_od = True
     run_pa_split_by_tp = True
-    run_od_matrix_reports = True
+    run_od_matrix_reports = False
     compile_to_assignment = True
 
     if mode == nd.Mode.CAR:
@@ -135,7 +136,9 @@ def main():
         lower_calibration_areas = lower_calibration_area
         lower_calibration_naming = None
 
-        gm_cost_function = nd.BuiltInCostFunction.LOG_NORMAL.get_cost_function()
+        #gm_cost_function = nd.BuiltInCostFunction.LOG_NORMAL.get_cost_function()
+        # 2024 update
+        gm_cost_function = cost_functions.BuiltInCostFunction.LOG_NORMAL.get_cost_function()
 
         gravity_kwargs = {
             'cost_function': gm_cost_function,
@@ -213,7 +216,9 @@ def main():
         lower_calibration_areas = lower_calibration_area
         lower_calibration_naming = None
 
-        gm_cost_function = nd.BuiltInCostFunction.LOG_NORMAL.get_cost_function()
+        #gm_cost_function = nd.BuiltInCostFunction.LOG_NORMAL.get_cost_function()
+        # 2024 update
+        gm_cost_function = cost_functions.BuiltInCostFunction.LOG_NORMAL.get_cost_function()
 
         gravity_kwargs = {
             'cost_function': gm_cost_function,
@@ -247,8 +252,8 @@ def main():
     elif mode == nd.Mode.TRAIN:
         # Define zoning systems
         upper_zoning_system = nd.get_zoning_system('msoa')
-        lower_zoning_system = nd.get_zoning_system('msoa')
-        compile_zoning_system = nd.get_zoning_system('norms')
+        lower_zoning_system = nd.get_zoning_system('miranda')
+        compile_zoning_system = nd.get_zoning_system('miranda')
 
         # Define cost arguments
         intrazonal_cost_infill = 0.5
@@ -291,7 +296,9 @@ def main():
         lower_calibration_areas = lower_calibration_area
         lower_calibration_naming = None
 
-        gm_cost_function = nd.BuiltInCostFunction.LOG_NORMAL.get_cost_function()
+        #gm_cost_function = nd.BuiltInCostFunction.LOG_NORMAL.get_cost_function()
+        # 2024 update
+        gm_cost_function = cost_functions.BuiltInCostFunction.LOG_NORMAL.get_cost_function()
 
         gravity_kwargs = {
             'cost_function': gm_cost_function,
@@ -367,7 +374,9 @@ def main():
         lower_hb_target_tld_dir = None
         lower_nhb_target_tld_dir = None
 
-        gm_cost_function = nd.BuiltInCostFunction.LOG_NORMAL.get_cost_function()
+        #gm_cost_function = nd.BuiltInCostFunction.LOG_NORMAL.get_cost_function()
+        # 2024 update
+        gm_cost_function = cost_functions.BuiltInCostFunction.LOG_NORMAL.get_cost_function()
 
         gravity_kwargs = {
             'cost_function': gm_cost_function,
@@ -400,161 +409,6 @@ def main():
             lower_model_kwargs = [x[1].copy() for x in choice if x[0] == lower_model_method][0]
         else:
             lower_model_kwargs = None
-
-    elif mode == nd.Mode.WALK:
-        # Define zoning systems
-        upper_zoning_system = nd.get_zoning_system('msoa')
-        lower_zoning_system = nd.get_zoning_system('lsoa')
-        compile_zoning_system = None
-
-        # Define cost arguments
-        intrazonal_cost_infill = 0.5
-
-        # Define segmentations for trip ends and running
-        hb_agg_seg = nd.get_segmentation_level('hb_p_m')
-        nhb_agg_seg = nd.get_segmentation_level('dimo_nhb_p_m_tp_wday')
-        hb_running_seg = nd.get_segmentation_level('hb_p_m_walk')
-        nhb_running_seg = nd.get_segmentation_level('dimo_nhb_p_m_tp_wday_walk')
-        hb_seg_name = 'p_m'
-        nhb_seg_name = 'p_m_tp'
-
-        # ## DEFINE HOW TO RUN DISTRIBUTIONS ## #
-        # Define target tld dirs
-        target_tld_version = 'v1'
-        geo_constraint_type = 'trip_OD'
-
-        upper_calibration_area = 'gb'
-        upper_calibration_bands = 'dm_highway_bands'
-        #upper_target_tld_dir = os.path.join(geo_constraint_type, upper_calibration_bands)
-        upper_target_tld_dir = r"C:\Users\DAGA1\Documents\GitHub\NorMITs-Demand\inputs\tlds"
-        upper_hb_target_tld_dir = upper_target_tld_dir
-        upper_nhb_target_tld_dir = upper_target_tld_dir
-        #upper_hb_target_tld_dir = os.path.join(upper_target_tld_dir, 'hb_p_m')
-        #upper_nhb_target_tld_dir = os.path.join(upper_target_tld_dir, 'nhb_p_m_tp')
-        upper_model_method = nd.DistributionMethod.GRAVITY
-        upper_calibration_zones_fname = None
-        upper_calibration_areas = upper_calibration_area
-        upper_calibration_naming = None
-
-        lower_calibration_area = 'north_and_mids'
-        lower_calibration_bands = 'dm_highway_bands'
-        #lower_target_tld_dir = os.path.join(geo_constraint_type, lower_calibration_bands)
-        lower_target_tld_dir = r"C:\Users\DAGA1\Documents\GitHub\NorMITs-Demand\inputs\tlds"
-        lower_hb_target_tld_dir = lower_target_tld_dir
-        lower_nhb_target_tld_dir = lower_target_tld_dir
-        #lower_hb_target_tld_dir = os.path.join(lower_target_tld_dir, 'hb_p_m')
-        #lower_nhb_target_tld_dir = os.path.join(lower_target_tld_dir, 'nhb_p_m_tp')
-        lower_model_method = nd.DistributionMethod.GRAVITY
-        lower_calibration_zones_fname = None
-        lower_calibration_areas = lower_calibration_area
-        lower_calibration_naming = None
-
-        gm_cost_function = nd.BuiltInCostFunction.LOG_NORMAL.get_cost_function()
-
-        gravity_kwargs = {
-            'cost_function': gm_cost_function,
-            'target_convergence': 90,
-            #'target_convergence': 0.9,
-            'grav_max_iters': 1,
-            #'grav_max_iters': 100,
-            'furness_max_iters': 1,
-            #'furness_max_iters': 3000,
-            'furness_tol': 100,
-            #'furness_tol': 0.1,
-            'calibrate_params': calibrate_params,
-            'memory_optimised': memory_optimised_multi_area_grav,
-            'estimate_init_params': False,
-            'use_perceived_factors': True,
-        }
-
-        # Args only work for upper atm!
-        furness3d_kwargs = {
-            'target_convergence': 0.9,
-            'outer_max_iters': 50,
-            'furness_max_iters': 3000,
-            'furness_tol': 0.1,
-            'calibrate': True,
-        }
-
-        # Choose the correct kwargs
-        gravity = (nd.DistributionMethod.GRAVITY, gravity_kwargs)
-        furness3d = (nd.DistributionMethod.FURNESS3D, furness3d_kwargs)
-        choice = [gravity, furness3d]
-
-        upper_model_kwargs = [x[1].copy() for x in choice if x[0] == upper_model_method][0]
-        lower_model_kwargs = [x[1].copy() for x in choice if x[0] == lower_model_method][0]
-
-
-
-    elif mode == nd.Mode.CYCLE:
-        # Define zoning systems
-        upper_zoning_system = nd.get_zoning_system('msoa')
-        lower_zoning_system = nd.get_zoning_system('lsoa')
-        compile_zoning_system = None
-
-        # Define cost arguments
-        intrazonal_cost_infill = 0.5
-
-        # Define segmentations for trip ends and running
-        hb_agg_seg = nd.get_segmentation_level('hb_p_m')
-        nhb_agg_seg = nd.get_segmentation_level('dimo_nhb_p_m_tp_wday')
-        hb_running_seg = nd.get_segmentation_level('hb_p_m_cycle')
-        nhb_running_seg = nd.get_segmentation_level('dimo_nhb_p_m_tp_wday_cycle')
-        hb_seg_name = 'p_m'
-        nhb_seg_name = 'p_m_tp'
-
-        upper_calibration_area = 'gb'
-        upper_calibration_bands = 'dm_highway_bands'
-        # upper_target_tld_dir = os.path.join(geo_constraint_type, upper_calibration_bands)
-        upper_target_tld_dir = r"C:\Users\DAGA1\Documents\GitHub\NorMITs-Demand\inputs\tlds"
-        upper_hb_target_tld_dir = os.path.join(upper_target_tld_dir, 'hb_p_m')
-        upper_nhb_target_tld_dir = os.path.join(upper_target_tld_dir, 'nhb_p_m_tp')
-        upper_model_method = nd.DistributionMethod.GRAVITY
-        upper_calibration_zones_fname = None
-        upper_calibration_areas = upper_calibration_area
-        upper_calibration_naming = None
-
-        lower_calibration_area = 'north_and_mids'
-        lower_calibration_bands = 'dm_highway_bands'
-        # lower_target_tld_dir = os.path.join(geo_constraint_type, lower_calibration_bands)
-        lower_target_tld_dir = r"C:\Users\DAGA1\Documents\GitHub\NorMITs-Demand\inputs\tlds"
-        lower_hb_target_tld_dir = os.path.join(lower_target_tld_dir, 'hb_p_m')
-        lower_nhb_target_tld_dir = os.path.join(lower_target_tld_dir, 'nhb_p_m_tp')
-        lower_model_method = nd.DistributionMethod.GRAVITY
-        lower_calibration_zones_fname = None
-        lower_calibration_areas = lower_calibration_area
-        lower_calibration_naming = None
-
-        gm_cost_function = nd.BuiltInCostFunction.LOG_NORMAL.get_cost_function()
-
-        gravity_kwargs = {
-            'cost_function': gm_cost_function,
-            'target_convergence': 0.9,
-            'grav_max_iters': 100,
-            'furness_max_iters': 3000,
-            'furness_tol': 0.1,
-            'calibrate_params': calibrate_params,
-            'memory_optimised': memory_optimised_multi_area_grav,
-            'estimate_init_params': False,
-            'use_perceived_factors': True,
-        }
-
-        # Args only work for upper atm!
-        furness3d_kwargs = {
-            'target_convergence': 0.9,
-            'outer_max_iters': 50,
-            'furness_max_iters': 3000,
-            'furness_tol': 0.1,
-            'calibrate': True,
-        }
-
-        # Choose the correct kwargs
-        gravity = (nd.DistributionMethod.GRAVITY, gravity_kwargs)
-        furness3d = (nd.DistributionMethod.FURNESS3D, furness3d_kwargs)
-        choice = [gravity, furness3d]
-
-        upper_model_kwargs = [x[1].copy() for x in choice if x[0] == upper_model_method][0]
-        lower_model_kwargs = [x[1].copy() for x in choice if x[0] == lower_model_method][0]
 
     else:
         raise ValueError(

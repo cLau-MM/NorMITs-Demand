@@ -314,8 +314,8 @@ class CostDistribution:
     def from_csv(
         path: os.PathLike,
         cost_units: nd_core.CostUnits,
-        min_bounds_col: str = None,
-        max_bounds_col: str = None,
+        min_bounds_col: str = 'min',
+        max_bounds_col: str = 'max',
         trips_col: str = None,
         mean_col: str = None,
     ) -> CostDistribution:

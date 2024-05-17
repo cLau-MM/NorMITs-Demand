@@ -137,3 +137,4 @@ docs/systra_splitting_factors/Params
 
 # Autosave backup files from draw.io
 *.drawio.bkp
+/inputs/costs

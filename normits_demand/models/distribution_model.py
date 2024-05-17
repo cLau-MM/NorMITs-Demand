@@ -763,28 +763,33 @@ class DistributionModel(DistributionModelExportPaths):
             year=str(self.year),
             compressed=True,
         )
-
-        if self.trip_origin == nd.core.TripOrigin.HB.value:
-            matrix_formats = ["synthetic_od_from", "synthetic_od_to"]
-        elif self.trip_origin == nd.core.TripOrigin.NHB.value:
-            matrix_formats = ["synthetic_od"]
-        else:
-            raise ValueError(f"Trip origin '{self.trip_origin}' not recognised.")
+        matrix_formats = ["synthetic_od"]
+        # if self.trip_origin == nd.core.TripOrigin.HB.value:
+        #     matrix_formats = ["synthetic_od_from", "synthetic_od_to"]
+        # elif self.trip_origin == nd.core.TripOrigin.NHB.value:
+        #     matrix_formats = ["synthetic_od"]
+        # else:
+        #     raise ValueError(f"Trip origin '{self.trip_origin}' not recognised.")
 
         # Build the multiprocessing kwargs
         kwarg_list = list()
 
         # BACKLOG(BT): This is all a really rough kludge to get this working
         #  NOW. Need to come back and think how to do this properly.
-        if self.running_segmentation.has_time_period_segments():
-            iterator = itertools.product(self.running_segmentation, [-1])
-            naming_order = self.running_segmentation.naming_order
-            segment_types = self.running_segmentation.segment_types
-        else:
-            tps = [1, 2, 3, 4, 5, 6]
-            iterator = itertools.product(self.running_segmentation, tps)
-            naming_order = self.running_segmentation.naming_order + ['tp']
-            segment_types = self.running_segmentation.segment_types | {"tp": int}
+        # if self.running_segmentation.has_time_period_segments():
+        #     iterator = itertools.product(self.running_segmentation, [-1])
+        #     naming_order = self.running_segmentation.naming_order
+        #     segment_types = self.running_segmentation.segment_types
+        # else:
+        #     tps = [1, 2, 3, 4, 5, 6]
+        #     iterator = itertools.product(self.running_segmentation, tps)
+        #     naming_order = self.running_segmentation.naming_order + ['tp']
+        #     segment_types = self.running_segmentation.segment_types | {"tp": int}
+
+        tps = [1, 2, 3, 4, 5, 6]
+        iterator = itertools.product(self.running_segmentation, tps)
+        naming_order = self.running_segmentation.naming_order + ['tp']
+        segment_types = self.running_segmentation.segment_types | {"tp": int}
 
         for segment_params, tp in iterator:
             # Generate filenames
