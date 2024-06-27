@@ -43,7 +43,7 @@ TRAM_EXPORT_HOME = r"I:\Products\P9. MiMITs\02 Working\MITs\NorMITs-Demand-0.5.2
 BASE_YEAR = 2023
 SCENARIO = nd.Scenario.SC01_JAM
 TARGET_TLD_VERSION = ''
-DM_ITERATION_NAME = '9.16.03'
+DM_ITERATION_NAME = '9.16.04'
 #DM_IMPORT_HOME = r"N:\NorMITs Demand\import"
 DM_IMPORT_HOME = r"C:\Users\DAGA1\Documents\GitHub\NorMITs-Demand\inputs"
 DM_EXPORT_HOME = r"I:\Products\P9. MiMITs\02 Working\MITs\NorMITs-Demand-0.5.2\Export"
@@ -59,7 +59,8 @@ NHB_SUBSET_SEG_BASE_NAME = '{te_model_name}_{trip_origin}_output_reduced'
 
 
 def main():
-    mode = nd.Mode.WALK
+    #mode = nd.Mode.WALK
+    mode = nd.Mode.CYCLE
     # mode = nd.Mode.CAR
     # mode = nd.Mode.BUS
     # mode = nd.Mode.TRAIN
@@ -75,13 +76,13 @@ def main():
     run_hb = True
     run_nhb = True
 
-    run_all = True
-    run_upper_model = True
-    run_lower_model = True
-    run_pa_matrix_reports = True
+    run_all = False
+    run_upper_model = False
+    run_lower_model = False
+    run_pa_matrix_reports = False
     run_pa_to_od = True
     run_pa_split_by_tp = True
-    run_od_matrix_reports = True
+    run_od_matrix_reports = False
     compile_to_assignment = True
 
     if mode == nd.Mode.CAR:
@@ -403,8 +404,10 @@ def main():
 
     elif mode == nd.Mode.WALK:
         # Define zoning systems
-        upper_zoning_system = nd.get_zoning_system('msoa')
-        lower_zoning_system = nd.get_zoning_system('lsoa')
+        #upper_zoning_system = nd.get_zoning_system('msoa')
+        #lower_zoning_system = nd.get_zoning_system('hybrid')
+        upper_zoning_system = nd.get_zoning_system('lsoa_int')
+        lower_zoning_system = nd.get_zoning_system('lsoa_int')
         compile_zoning_system = None
 
         # Define cost arguments
@@ -453,14 +456,14 @@ def main():
 
         gravity_kwargs = {
             'cost_function': gm_cost_function,
-            'target_convergence': 90,
-            #'target_convergence': 0.9,
-            'grav_max_iters': 1,
-            #'grav_max_iters': 100,
-            'furness_max_iters': 1,
-            #'furness_max_iters': 3000,
-            'furness_tol': 100,
-            #'furness_tol': 0.1,
+            #'target_convergence': 90,
+            'target_convergence': 0.9,
+            #'grav_max_iters': 1,
+            'grav_max_iters': 100,
+            #'furness_max_iters': 1,
+            'furness_max_iters': 3000,
+            #'furness_tol': 100,
+            'furness_tol': 0.1,
             'calibrate_params': calibrate_params,
             'memory_optimised': memory_optimised_multi_area_grav,
             'estimate_init_params': False,
@@ -488,8 +491,10 @@ def main():
 
     elif mode == nd.Mode.CYCLE:
         # Define zoning systems
-        upper_zoning_system = nd.get_zoning_system('msoa')
-        lower_zoning_system = nd.get_zoning_system('lsoa')
+        #upper_zoning_system = nd.get_zoning_system('msoa')
+        #lower_zoning_system = nd.get_zoning_system('hybrid')
+        upper_zoning_system = nd.get_zoning_system('lsoa_int')
+        lower_zoning_system = nd.get_zoning_system('lsoa_int')
         compile_zoning_system = None
 
         # Define cost arguments
@@ -507,8 +512,10 @@ def main():
         upper_calibration_bands = 'dm_highway_bands'
         # upper_target_tld_dir = os.path.join(geo_constraint_type, upper_calibration_bands)
         upper_target_tld_dir = r"C:\Users\DAGA1\Documents\GitHub\NorMITs-Demand\inputs\tlds"
-        upper_hb_target_tld_dir = os.path.join(upper_target_tld_dir, 'hb_p_m')
-        upper_nhb_target_tld_dir = os.path.join(upper_target_tld_dir, 'nhb_p_m_tp')
+        upper_hb_target_tld_dir = upper_target_tld_dir
+        upper_nhb_target_tld_dir = upper_target_tld_dir
+        # upper_hb_target_tld_dir = os.path.join(upper_target_tld_dir, 'hb_p_m')
+        # upper_nhb_target_tld_dir = os.path.join(upper_target_tld_dir, 'nhb_p_m_tp')
         upper_model_method = nd.DistributionMethod.GRAVITY
         upper_calibration_zones_fname = None
         upper_calibration_areas = upper_calibration_area
@@ -518,8 +525,10 @@ def main():
         lower_calibration_bands = 'dm_highway_bands'
         # lower_target_tld_dir = os.path.join(geo_constraint_type, lower_calibration_bands)
         lower_target_tld_dir = r"C:\Users\DAGA1\Documents\GitHub\NorMITs-Demand\inputs\tlds"
-        lower_hb_target_tld_dir = os.path.join(lower_target_tld_dir, 'hb_p_m')
-        lower_nhb_target_tld_dir = os.path.join(lower_target_tld_dir, 'nhb_p_m_tp')
+        lower_hb_target_tld_dir = lower_target_tld_dir
+        lower_nhb_target_tld_dir = lower_target_tld_dir
+        # lower_hb_target_tld_dir = os.path.join(lower_target_tld_dir, 'hb_p_m')
+        # lower_nhb_target_tld_dir = os.path.join(lower_target_tld_dir, 'nhb_p_m_tp')
         lower_model_method = nd.DistributionMethod.GRAVITY
         lower_calibration_zones_fname = None
         lower_calibration_areas = lower_calibration_area
@@ -562,22 +571,34 @@ def main():
         )
 
     # ## DEAL WITH PROCESS COUNT NEEDS ## #
-    process_count = -2
-    # process_count = 0
+    #process_count = -2
+    process_count = 3
     upper_model_process_count = process_count
     lower_model_process_count = process_count
 
-    # Need to limit process count for memory usage if MSOA
-    if upper_zoning_system.name == 'msoa':
-        max_process_count = 7
-
-        if os.cpu_count() > 10 and (process_count > 8 or process_count < 0):
-            upper_model_process_count = max_process_count
-
-        # Limit further if multi-area
-        if not isinstance(upper_calibration_areas, str):
-            n_areas = len(upper_calibration_areas)
-            upper_model_process_count = int(max_process_count / n_areas)
+    # # Need to limit process count for memory usage if MSOA
+    # if upper_zoning_system.name == 'msoa':
+    #     max_process_count = 7
+    #
+    #     if os.cpu_count() > 10 and (process_count > 8 or process_count < 0):
+    #         upper_model_process_count = max_process_count
+    #
+    #     # Limit further if multi-area
+    #     if not isinstance(upper_calibration_areas, str):
+    #         n_areas = len(upper_calibration_areas)
+    #         upper_model_process_count = int(max_process_count / n_areas)
+    #
+    # # Need to limit process count for memory usage if MSOA
+    # if upper_zoning_system.name == 'lsoa':
+    #     max_process_count = 0
+    #
+    #     if os.cpu_count() > 10 and (process_count > 8 or process_count < 0):
+    #         upper_model_process_count = max_process_count
+    #
+    #     # Limit further if multi-area
+    #     if not isinstance(upper_calibration_areas, str):
+    #         n_areas = len(upper_calibration_areas)
+    #         upper_model_process_count = int(max_process_count / n_areas)
 
     # ## SETUP TRIP END ARGS ## #
     kwargs = {

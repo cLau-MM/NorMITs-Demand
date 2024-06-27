@@ -782,7 +782,7 @@ class DistributionModelArgumentBuilder(DMArgumentBuilderBase):
             self.running_mode.value,
             zoning_system.name,
         )
-        fname = self.running_mode.value + 'Costs_InternalArea_Square_m.csv.bz2'
+        fname = self.running_mode.value + 'Costs_InternalArea_Square.csv.bz2'
         path = os.path.join(cost_dir, fname)
 
         # Read in the costs and infill
@@ -1151,14 +1151,11 @@ class DistributionModelArgumentBuilder(DMArgumentBuilderBase):
             template_fname.format,
             segment_params="{segment_params}",
         )
-
         # Build the factors dir
         fh_th_factors_dir = os.path.join(
-            self.import_home,
-            self._modal_dir_name,
-            self.running_mode.value,
+            r"I:\Products\P9. MiMITs\02 Working\MITs\NorMITs-Demand-0.5.2\Export",
             self._tour_props_dir_name,
-            self.tour_props_version,
+            self.running_mode.value,
             self.tour_props_zoning_name,
             self._fh_th_factors_dir_name,
         )

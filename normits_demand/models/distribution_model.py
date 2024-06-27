@@ -485,21 +485,22 @@ class DistributionModel(DistributionModelExportPaths):
         # ## GET THE FULL PA MATRICES ## #
         if self.lower_model_method is not None:
             # External should be made by  lower tier
-            self._logger.info("Combining Upper and Lower Tier Matrices")
-            import_dirs = [
-                self.lower.export_paths.matrix_dir,
-                self.export_paths.upper_external_pa,
-            ]
-            matrix_processing.combine_partial_matrices(
-                import_dirs=import_dirs,
-                export_dir=self.export_paths.full_pa_dir,
-                segmentation=self.running_segmentation,
-                import_suffixes=[None, self.arg_builder._external_suffix],
-                trip_origin=self.trip_origin,
-                year=str(self.year),
-                file_desc=self._pa_matrix_desc,
-                rounding=constants.DEFAULT_ROUNDING,
-            )
+            self._logger.info("NOT combining Upper and Lower Tier Matrices - using lower only")
+            # self._logger.info("Combining Upper and Lower Tier Matrices")
+            # import_dirs = [
+            #     self.lower.export_paths.matrix_dir,
+            #     self.export_paths.upper_external_pa,
+            # ]
+            # matrix_processing.combine_partial_matrices(
+            #     import_dirs=import_dirs,
+            #     export_dir=self.export_paths.full_pa_dir,
+            #     segmentation=self.running_segmentation,
+            #     import_suffixes=[None, self.arg_builder._external_suffix],
+            #     trip_origin=self.trip_origin,
+            #     year=str(self.year),
+            #     file_desc=self._pa_matrix_desc,
+            #     rounding=constants.DEFAULT_ROUNDING,
+            # )
         else:
             self._logger.info("Copying over Upper Tier Matrices")
             file_ops.copy_segment_files(
@@ -763,13 +764,13 @@ class DistributionModel(DistributionModelExportPaths):
             year=str(self.year),
             compressed=True,
         )
-        matrix_formats = ["synthetic_od"]
-        # if self.trip_origin == nd.core.TripOrigin.HB.value:
-        #     matrix_formats = ["synthetic_od_from", "synthetic_od_to"]
-        # elif self.trip_origin == nd.core.TripOrigin.NHB.value:
-        #     matrix_formats = ["synthetic_od"]
-        # else:
-        #     raise ValueError(f"Trip origin '{self.trip_origin}' not recognised.")
+        #matrix_formats = ["synthetic_od"]
+        if self.trip_origin == nd.core.TripOrigin.HB.value:
+            matrix_formats = ["synthetic_od_from", "synthetic_od_to"]
+        elif self.trip_origin == nd.core.TripOrigin.NHB.value:
+            matrix_formats = ["synthetic_od"]
+        else:
+            raise ValueError(f"Trip origin '{self.trip_origin}' not recognised.")
 
         # Build the multiprocessing kwargs
         kwarg_list = list()

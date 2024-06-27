@@ -36,15 +36,16 @@ from normits_demand.utils import file_ops
 
 # GLOBAL VARIABLES
 # TODO(BT): Make these command line arguments
-MODE = nd_core.Mode.BUS
-ZONING_NAME = "noham"
-YEAR = 2018
-IMPORT_DRIVE = "I:/"
+MODE = nd_core.Mode.CYCLE
+ZONING_NAME = "lsoa_int"
+YEAR = 2023
+#IMPORT_DRIVE = "I:/"
+IMPORT_DRIVE = r"I:\Products\P9. MiMITs\02 Working\MITs\NorMITs-Demand-0.5.2\Export"
 # EXPORT_HOME = r"E:\temp\tour props"
-EXPORT_HOME = r"I:\NorMITs Demand\import\modal"
+EXPORT_HOME = r"I:\Products\P9. MiMITs\02 Working\MITs\NorMITs-Demand-0.5.2\Export"
 NOTEM_SCENARIO = nd_core.Scenario.SC01_JAM
 
-NOTEM_ITER = "9.10"
+NOTEM_ITER = "9.16"
 RETURN_HOME_VERSION = "v3.0"
 
 
@@ -62,10 +63,10 @@ class IOPaths:
     zoning_system_name: nd_core.ZoningSystem
 
     # Optional arguments - probably don't want changing
-    nd_dir_name: str = "NorMITs Demand"
-    notem_dir_name: str = "NoTEM"
+    nd_dir_name: str = ""
+    notem_dir_name: str = ""
     return_home_dir_name: str = "phi_factors"
-    import_dir_name: str = "import"
+    import_dir_name: str = ""
     return_home_file_name: str = "phi_factors_m{mode}.csv"
     tour_prop_dir_name: str = "pre_me_tour_proportions"
     fh_th_dir_name: str = "fh_th_factors"
